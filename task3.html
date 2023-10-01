@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px auto;
+            max-width: 320px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 36px;
+            text-align: center;
+            vertical-align: middle;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background-color: #eee;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        #message {
+            margin-top: 10px;
+            font-size: 20px;
+        }
+    </style>
+    <title>Tic-Tac-Toe</title>
+</head>
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <div id="message">Player X's turn</div>
+    <div class="container" id="board">
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+    </div>
+
+    <script>
+        const cells = document.querySelectorAll('.cell');
+        const board = document.getElementById('board');
+        const message = document.getElementById('message');
+
+        let currentPlayer = 'X';
+        let gameOver = false;
+
+        function checkWinner() {
+            const winningCombos = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (const combo of winningCombos) {
+                const [a, b, c] = combo;
+                if (cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[a].textContent === cells[c].textContent) {
+                    gameOver = true;
+                    cells[a].style.backgroundColor = 'green';
+                    cells[b].style.backgroundColor = 'green';
+                    cells[c].style.backgroundColor = 'green';
+                    message.textContent = `Player ${currentPlayer} wins!`;
+                    return;
+                }
+            }
+
+            if (![...cells].some(cell => cell.textContent === '')) {
+                gameOver = true;
+                message.textContent = "It's a draw!";
+            }
+        }
+
+        function handleClick(e) {
+            const cell = e.target;
+
+            if (!cell.textContent && !gameOver) {
+                cell.textContent = currentPlayer;
+                cell.style.color = currentPlayer === 'X' ? 'blue' : 'red';
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                message.textContent = `Player ${currentPlayer}'s turn`;
+                checkWinner();
+            }
+        }
+
+        function restartGame() {
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.style.backgroundColor = '';
+            });
+            currentPlayer = 'X';
+            gameOver = false;
+            message.textContent = `Player ${currentPlayer}'s turn`;
+        }
+
+        cells.forEach(cell => cell.addEventListener('click', handleClick));
+        board.addEventListener('click', checkWinner);
+        board.addEventListener('contextmenu', restartGame);
+
+        restartGame(); // Initialize the game
+    </script>
+</body>
+</html>
